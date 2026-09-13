@@ -10,6 +10,7 @@
 <script src="vendor/three.min.js"></script>
 <script src="js/brain-viz.js"></script>
 <script src="js/chart.js"></script>
+<script src="js/audio.js"></script>
 </head>
 <body>
 <div id="scene"></div>
@@ -79,7 +80,12 @@
         <button id="btn-pause" class="big">PAUSE</button>
         <button id="btn-reset" class="big danger">RESET BRAIN</button>
       </div>
-      <div id="save-note" class="note">progress auto-saves to this browser</div>
+      <div class="btn-row">
+        <button id="btn-sound" class="big">SOUND OFF</button>
+        <a class="big github-cta" href="https://github.com/realgauravvyas/fly-gambit" target="_blank" rel="noopener">STAR ON GITHUB</a>
+      </div>
+      <div class="note">by <a href="https://github.com/realgauravvyas" target="_blank" rel="noopener">@realgauravvyas</a> — progress auto-saves to this browser</div>
+      <div id="save-note" class="note"></div>
     </div>
     <div id="human-hint" class="note hide">You play <b>white</b>. The fly plays black — and learns from your games.</div>
   </aside>

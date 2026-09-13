@@ -14,7 +14,7 @@
   Sparkline.prototype.draw = function () {
     var c = this.ctx, W = this.cv.width, H = this.cv.height;
     c.clearRect(0, 0, W, H);
-    c.strokeStyle = 'rgba(95,232,255,0.08)';
+    c.strokeStyle = 'rgba(107,255,176,0.08)';
     c.lineWidth = 1;
     for (var g = 1; g < 4; g++) {
       c.beginPath(); c.moveTo(0, H * g / 4); c.lineTo(W, H * g / 4); c.stroke();
@@ -24,7 +24,7 @@
       if (this.a[i] > maxY) maxY = this.a[i];
       if (this.b[i] > maxY) maxY = this.b[i];
     }
-    line(this.a, '#5fe8ff'); line(this.b, '#ff5fd0');
+    line(this.a, '#6bffb0'); line(this.b, '#ff7043');
     var self = this;
     function line(arr, color) {
       if (arr.length < 2) return;

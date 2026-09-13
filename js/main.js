@@ -16,6 +16,8 @@ FG._demoBrain = trainer.brain;
 
 const SAVE_KEY = '***';
 let game = trainer.beginGame();
+let show = trainer.beginGame();   // showcase game watched in TURBO mode
+let showAcc = 0;
 let mode = 'replay';           // replay | turbo | human
 let paused = false;
 let speed = 5;                 // 1..10
@@ -25,7 +27,7 @@ let humanSel = null;           // {from, targets:[{to,move}]}
 let lastMoveEl = null;
 let totalPlies = 0, totalMoves = 0;
 let lastEntropy = null, lastConf = 0;
-let gamesAtSave = 0, gpsShown = 0;
+let gamesAtSave = 0, gpsShown = 0, lastSaveMs = 0;
 
 restore();
 
@@ -100,9 +102,9 @@ function showTargets(from) {
     if (t) t.el.classList.add('target', 'clickable');
   }
 }
-function addMoveText(san, isWhite, mover) {
+function addMoveText(san, isWhite, mover, g) {
   const span = document.createElement('span');
-  if (isWhite) span.textContent = (Math.floor((game.plies.length + 1) / 2)) + '. ';
+  if (isWhite) span.textContent = Math.floor(((g || game).plies.length + 1) / 2) + '. ';
   span.append(san + ' ');
   if (mover === 'fly') span.className = 'flym';
   movesEl.appendChild(span);
@@ -120,35 +122,43 @@ function banner(text, bad) {
   bannerTimer = setTimeout(() => bannerEl.classList.add('hide'), 2600);
 }
 
-/* ---------------- training loops ---------------- */
-function afterGame() {
-  const res = trainer.finishGame(game);
+/* ---------------- training loops ----------------
+ * TURBO trains at full speed on an invisible game while one showcase
+ * game is played out slowly with the same live brain.                  */
+function restart(g) {
+  const res = trainer.finishGame(g);
   if (res) {
     chart.push(trainer.captureRates[trainer.captureRates.length - 1] || 0, trainer.accVsGreedy);
     if (res.winner !== 'draw' && res.terminal === 1 && Math.random() < 0.06) {
-      banner('checkmate in self-play - ' + (res.winner === 'w' ? 'white' : 'black') + ' neuropil wins');
+      banner('checkmate in self-play - ' + (res.winner === 'w' ? 'white' : 'black') + ' side wins');
     }
     autosave();
   }
-  game = trainer.beginGame();
-  renderBoard(game.chess);
-  movesEl.innerHTML = '';
-  lastMoveEl = null;
-  humanSel = null;
-  clearTargets();
+  const fresh = trainer.beginGame();
+  if (g === game) game = fresh; else show = fresh;
+  const visible = mode === 'turbo' ? show : game;
+  if (fresh === visible) { // only reset the UI if this game is on screen
+    FG.sound.play('newgame');
+    renderBoard(fresh.chess);
+    movesEl.innerHTML = '';
+    lastMoveEl = null;
+    humanSel = null;
+    clearTargets();
+  }
 }
 
-function stepSelfPlay(temp) {
-  const info = trainer.stepGame(game, temp);
-  if (!info) { afterGame(); return; }
+function stepVisible(g, temp) {
+  const info = trainer.stepGame(g, temp);
+  if (!info) { restart(g); return; }
   totalPlies++;
   lastEntropy = info.entropy;
   let mx = 0; for (let i = 0; i < info.probs.length; i++) mx = Math.max(mx, info.probs[i]);
   lastConf = mx;
   viz.pulseMove(info.viz);
-  renderBoard(game.chess);
+  renderBoard(g.chess);
   markLast(info.move);
-  addMoveText(info.san, info.move.color === 'w', 'fly');
+  addMoveText(info.san, info.move.color === 'w', 'fly', g);
+  playMoveSound(info.move, info.gameOver ? info.status : null);
   if (info.gameOver) {
     const st = info.status;
     if (st.startsWith('checkmate')) banner('checkmate - ' + (st.split(':')[1] === 'w' ? 'white' : 'black') + ' side wins');
@@ -170,6 +180,7 @@ function flyMove() {
   renderBoard(game.chess);
   markLast(info.move);
   addMoveText(info.san, false, 'fly');
+  playMoveSound(info.move, info.gameOver ? info.status : null);
   if (game.over) endHumanGame();
 }
 function endHumanGame() {
@@ -205,6 +216,7 @@ boardEl.addEventListener('click', e => {
       renderBoard(game.chess);
       markLast(mv);
       addMoveText(mv.san, mv.color === 'w', 'you');
+      playMoveSound(mv, null);
       clearTargets(); humanSel = null;
       flyTimer = 0.55;
       if (game.over) endHumanGame();
@@ -218,9 +230,9 @@ boardEl.addEventListener('click', e => {
 
 /* ---------------- regions / silence ---------------- */
 const REGIONS = [
-  { id: 'optic', name: 'Optic neuropil', sub: 'sensory inputs', color: '#9fd4ff', frac: 0.6 },
-  { id: 'lobula', name: 'Lobula complex', sub: '256 neurons - k=20', color: '#5fe8ff', frac: 0.6 },
-  { id: 'mb', name: 'Mushroom body', sub: '128 neurons - judgment', color: '#cf7bff', frac: 0.6 },
+  { id: 'optic', name: 'Optic neuropil', sub: 'sensory inputs', color: '#ffe0a0', frac: 0.6 },
+  { id: 'lobula', name: 'Lobula complex', sub: '256 neurons - k=20', color: '#6bffb0', frac: 0.6 },
+  { id: 'mb', name: 'Mushroom body', sub: '128 neurons - judgment', color: '#ff5540', frac: 0.6 },
   { id: 'cc', name: 'Central complex', sub: '64 - action selection', color: '#ffcf5f', frac: 1 }
 ];
 (function buildRegions() {
@@ -237,6 +249,7 @@ const REGIONS = [
     btn.onclick = () => {
       const on = btn.classList.toggle('on');
       trainer.brain.setSilence(r.id, on ? r.frac : 0);
+      FG.sound.play(on ? 'zapOn' : 'zapOff');
       if (on) banner('silencing ' + r.name.toLowerCase() + '... watch the play degrade', true);
     };
     div.appendChild(btn);
@@ -250,6 +263,8 @@ function setMode(m) {
   for (const id of ['replay', 'turbo', 'human']) $('mode-' + id).classList.toggle('active', id === m);
   $('human-hint').classList.toggle('hide', m !== 'human');
   game = trainer.beginGame();
+  show = trainer.beginGame();
+  acc = 0; showAcc = 0;
   renderBoard(game.chess);
   movesEl.innerHTML = '';
   humanSel = null; lastMoveEl = null; clearTargets();
@@ -263,6 +278,18 @@ $('mode-replay').onclick = () => setMode('replay');
 $('mode-turbo').onclick = () => setMode('turbo');
 $('mode-human').onclick = () => setMode('human');
 $('speed').oninput = e => speed = +e.target.value;
+$('btn-sound').onclick = () => {
+  const on = FG.sound.toggle();
+  $('btn-sound').textContent = on ? 'SOUND ON' : 'SOUND OFF';
+  $('btn-sound').classList.toggle('active', on);
+};
+function playMoveSound(mv, status) {
+  if (status && status.startsWith('checkmate')) { FG.sound.play('mate', mv.color === 'w' ? 1 : 0); return; }
+  if (mv.san.indexOf('#') >= 0) { FG.sound.play('mate', 1); return; }
+  if (mv.san.indexOf('+') >= 0) FG.sound.play('check');
+  else if (mv.captured) FG.sound.play('capture', mv.piece);
+  else FG.sound.play('move', mv.piece);
+}
 $('btn-pause').onclick = togglePause;
 $('btn-reset').onclick = () => {
   localStorage.removeItem(SAVE_KEY);
@@ -271,6 +298,7 @@ $('btn-reset').onclick = () => {
   trainer.accVsGreedy = 0; trainer._nAcc = 0;
   trainer.brain = new FG.FlyBrain();
   FG._demoBrain = trainer.brain;
+  gamesAtSave = 0; lastSaveMs = 0;
   chart.a.length = 0; chart.b.length = 0;
   disposeViz();
   viz = new FG.BrainViz(sceneEl);
@@ -279,7 +307,7 @@ $('btn-reset').onclick = () => {
   banner('a fresh fly brain. it knows nothing about chess. yet');
 };
 window.addEventListener('keydown', e => {
-  if (e.code === 'Space') { e.preventDefault(); togglePause(); }
+  if (e.code === 'Space' && !/^(BUTTON|INPUT)$/.test(e.target.tagName)) { e.preventDefault(); togglePause(); }
 });
 function togglePause() {
   paused = !paused;
@@ -294,8 +322,11 @@ function disposeViz() {
 
 /* ---------------- persistence ---------------- */
 function autosave() {
-  if (trainer.gamesPlayed - gamesAtSave < 8) return;
+  const nowMs = performance.now();
+  if (trainer.gamesPlayed - gamesAtSave < 8 && nowMs - lastSaveMs < 30000) return;
+  if (nowMs - lastSaveMs < 5000) return;
   gamesAtSave = trainer.gamesPlayed;
+  lastSaveMs = nowMs;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       v: 1, brain: trainer.brain.save(), g: trainer.gamesPlayed,
@@ -362,11 +393,20 @@ function loop() {
     if (mode === 'replay') {
       const interval = 1.7 - speed * 0.16;
       acc += dt;
-      while (acc >= interval) { acc -= interval; stepSelfPlay(1.0); }
+      while (acc >= interval) { acc -= interval; stepVisible(game, 1.0); }
     } else if (mode === 'turbo') {
+      // train at full speed invisibly (game) while the visible board shows
+      // a single showcase game (show) at a watchable pace
       const deadline = performance.now() + 4 + speed * 0.9;
       let guard = 0;
-      while (performance.now() < deadline && guard++ < 3000) stepSelfPlay(1.0);
+      while (performance.now() < deadline && guard++ < 3000) {
+        const info = trainer.stepGame(game, 1.0);
+        if (!info) restart(game);
+        else totalPlies++;
+      }
+      const interval = 1.4 - speed * 0.11; // ~0.3-1.3s per showcase move
+      showAcc += dt;
+      while (showAcc >= interval) { showAcc -= interval; stepVisible(show, 1.0); }
     } else if (mode === 'human') {
       if (flyTimer > 0) {
         flyTimer -= dt;

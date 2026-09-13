@@ -111,7 +111,7 @@
     // abdomen: tapered segments with striped hue shift
     var abd1 = new T.Mesh(new T.SphereGeometry(0.95, 22, 16), bodyMat.clone());
     abd1.position.set(0, -0.02, -2.6); abd1.scale.set(0.92, 0.8, 1.15); g.add(abd1);
-    var abd2Mat = bodyMat.clone(); abd2Mat.color.setHex(0x4a3122);
+    var abd2Mat = bodyMat.clone(); abd2Mat.color.setHex(0x8a5a22);
     var abd2 = new T.Mesh(new T.SphereGeometry(0.72, 20, 14), abd2Mat);
     abd2.position.set(0, -0.06, -3.62); abd2.scale.set(0.88, 0.72, 1.25); g.add(abd2);
     var tip = new T.Mesh(new T.SphereGeometry(0.42, 14, 10), bodyMat);
@@ -153,7 +153,7 @@
     SIZE = global.FG.FlyBrain.SIZE;
     this.container = container;
     this.scene = new T.Scene();
-    this.scene.fog = new T.FogExp2(0x04050c, 0.02);
+    this.scene.fog = new T.FogExp2(0x080503, 0.02);
     this.camera = new T.PerspectiveCamera(52, 1, 0.1, 100);
     this.camDist = 6.9;
     this.theta = 0.62; this.phi = 1.30;
@@ -162,25 +162,25 @@
 
     this.renderer = new T.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x04050c, 1);
+    this.renderer.setClearColor(0x080503, 1);
     container.appendChild(this.renderer.domElement);
 
     this.scene.add(new T.AmbientLight(0x223344, 0.9));
-    var l1 = new T.PointLight(0x66ddff, 1.1, 60); l1.position.set(8, 6, 10); this.scene.add(l1);
-    var l2 = new T.PointLight(0xff44aa, 0.65, 60); l2.position.set(-9, -4, -6); this.scene.add(l2);
-    var l3 = new T.PointLight(0x3355ff, 0.6, 60); l3.position.set(0, -10, 4); this.scene.add(l3);
+    var l1 = new T.PointLight(0xffe8b8, 1.05, 60); l1.position.set(8, 6, 10); this.scene.add(l1);
+    var l2 = new T.PointLight(0x44ff99, 0.55, 60); l2.position.set(-9, -4, -6); this.scene.add(l2);
+    var l3 = new T.PointLight(0x9944ff, 0.30, 60); l3.position.set(0, -10, 4); this.scene.add(l3);
 
     this.brainGroup = new T.Group(); // parented to the fly head below
 
     var shellMat = new T.MeshPhongMaterial({
-      color: 0x1b1410, transparent: true, opacity: 0.34,
-      shininess: 60, specular: 0x3a4a55, depthWrite: false, side: T.DoubleSide
+      color: 0x3a2a16, transparent: true, opacity: 0.34,
+      shininess: 60, specular: 0x665533, depthWrite: false, side: T.DoubleSide
     });
     var eyeMat = new T.MeshPhongMaterial({
       color: 0x6b1f18, emissive: 0x330b08, transparent: true, opacity: 0.92, shininess: 90
     });
     var wingMat = new T.MeshBasicMaterial({
-      color: 0x9ad8ff, transparent: true, opacity: 0.13, blending: T.AdditiveBlending, depthWrite: false
+      color: 0xffd8a0, transparent: true, opacity: 0.12, blending: T.AdditiveBlending, depthWrite: false
     });
     this.fly = buildFly(shellMat, eyeMat, wingMat);
     this.fly.position.set(0, 0, 0);
@@ -225,7 +225,7 @@
     '  float d = length(uv);',
     '  float a = smoothstep(0.5, 0.05, d);',
     '  float glow = exp(-d * d * 9.0);',
-    '  vec3 col = vColor * (0.62 + 2.6 * vAct) + vec3(1.0, 0.97, 0.9) * glow * vAct * 1.6;',
+    '  vec3 col = vColor * (0.62 + 2.6 * vAct) + vec3(1.0, 0.93, 0.72) * glow * vAct * 1.6;',
     '  gl_FragColor = vec4(col, a * (0.5 + 1.3 * vAct));',
     '}'
   ].join('\n');
@@ -269,7 +269,7 @@
     var lp = this.layout.lobula, lc = [], lz = [], ls = [];
     for (var j = 0; j < lp.length; j++) {
       var v = 0.55 + Math.random() * 0.45;
-      lc.push(0.20 * v, 0.85 * v, 1.0 * v);
+      lc.push(0.35 * v, 1.0 * v, 0.45 * v);
       lz.push(lp[j][0], lp[j][1], lp[j][2]);
       ls.push(0.10);
     }
@@ -277,7 +277,7 @@
     // MB: violet
     var mp = this.layout.mb, mc = [], mz = [], ms = [];
     for (var m = 0; m < mp.length; m++) {
-      mc.push(0.95, 0.55, 1.0);
+      mc.push(1.0, 0.30, 0.22);
       mz.push(mp[m][0], mp[m][1], mp[m][2]);
       ms.push(0.11);
     }
@@ -397,7 +397,7 @@
     }
     var g = new T.BufferGeometry();
     g.setAttribute('position', new T.BufferAttribute(pos, 3));
-    var m = new T.PointsMaterial({ color: 0x3a5a7a, size: 0.07, transparent: true, opacity: 0.7 });
+    var m = new T.PointsMaterial({ color: 0x6a5233, size: 0.07, transparent: true, opacity: 0.7 });
     this.stars = new T.Points(g, m);
     this.scene.add(this.stars);
   };
@@ -448,13 +448,17 @@
   BrainViz.prototype.decay = function (dt, speed) {
     var k = Math.exp(-dt * speed);
     var names = ['optic', 'lobula', 'mb', 'cc'];
+    var flux = 0;
     for (var n = 0; n < 4; n++) {
       var cur = this.current[names[n]], tgt = this.targets[names[n]];
       for (var i = 0; i < cur.length; i++) {
-        cur[i] = cur[i] * k + (1 - k) * tgt[i];
+        var nv = cur[i] * k + (1 - k) * tgt[i];
+        flux += Math.abs(nv - cur[i]);
+        cur[i] = nv;
         tgt[i] = tgt[i] * k; // targets themselves fade, re-ignited per pulse
       }
     }
+    this._flux = flux;
   };
 
   var LAYER_KEYS = ['optic', 'lobula', 'mb', 'cc'];
@@ -470,17 +474,21 @@
       }
       pts[p].geometry.attributes.aAct.needsUpdate = true;
     }
-    // synapse colors from pre-synaptic activity * weight, dimming along the axon
+    // synapse colors: skip the 82k-vertex recolor when nothing is firing
     var colors = this.synColors, meta = this.edgeMeta, vPerE = this.SEG * 2;
+    if (this._flux < 0.02 && this.flashT <= 0) {
+      // only the faint idle shimmer remains; static synapse colors are fine
+      return;
+    }
     var nVerts = colors.length / 3;
     for (var v = 0; v < nVerts; v++) {
       var m = meta[v];
       var a = m.pre.l === 3 ? 0 : this.current[LAYER_KEYS[m.pre.l]][m.pre.n] * m.w;
       var fade = 1 - 0.65 * ((v % vPerE) / (vPerE - 1));
       var base = v * 3, I = a * fade;
-      colors[base] = I * 0.18;
-      colors[base + 1] = I * 0.62;
-      colors[base + 2] = I * 1.0;
+      colors[base] = I * 0.22;
+      colors[base + 1] = I * 1.0;
+      colors[base + 2] = I * 0.45;
     }
     this.synapses.geometry.attributes.color.needsUpdate = true;
   };

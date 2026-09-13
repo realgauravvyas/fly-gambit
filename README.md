@@ -20,8 +20,20 @@ that flaps, bobs and plays material.
 | Mode | What happens |
 |---|---|
 | **REPLAY** | One self-play game at watchable speed. Each move pulses the real activations of the network — optic → lobula → mushroom body → central complex. |
-| **TURBO** | The fly plays itself at tens of games per second. Watch the learning curves (capture rate + agreement with a greedy-capture baseline) climb. |
+| **TURBO** | Training games run at full speed invisibly while one showcase game plays out at watchable pace. Watch the learning curves (capture rate + agreement with a greedy-capture baseline) climb. |
 | **YOU vs FLY** | You play white, the fly plays black — and it *learns from your games too*, including the ones you win. |
+| **SOUND** | Procedurally synthesized (WebAudio, zero audio files): synaptic blips per piece type, thumps on captures, arpeggios on mate, descending zaps when you silence a region. |
+
+## Visual identity
+
+FlyGambit is the companion to [AFTERWING][afterwing], another fly-connectome project by the
+same author — and it is deliberately the *other* kind of fly. AFTERWING is a jewel-toned
+creature (iridescent teal, violet bands, lilac wings) wandering an arena. FlyGambit is a
+**specimen under a fluorescence microscope**: amber-black background, GFP-green lobula,
+tdTomato-red mushroom body, gold central complex, honey chitin. One is a living insect,
+the other is a labelled brain doing science.
+
+[afterwing]: https://github.com/realgauravvyas/afterwing
 
 ## The thing nobody else did: brain lesions
 
@@ -41,10 +53,20 @@ the activation/silencing experiments that the connectomics field is *actually* u
 
 ## Live demo
 
-- Push this repo to GitHub → **Settings → Pages** → source `main` branch → the bundled
-  GitHub Actions workflow deploys it. Then open the URL. First link will appear here once deployed.
-- Or locally: `python -m http.server` (ES modules need any static server; double-clicking
-  `index.html` won't work) → `http://localhost:8000`
+**https://realgauravvyas.github.io/fly-gambit/** — no server, no Python, no setup.
+The fly learns chess *in your browser tab* and remembers its progress between visits.
+
+Local dev (ES modules need any static server; double-clicking `index.html` won't work):
+`python -m http.server 8000` → http://localhost:8000
+
+## Gallery
+
+| | |
+|---|---|
+| ![replay](assets/screens/hero.png) | A replay game: the 3D fly's real activations pulse with every move; learning curves on the left. |
+| ![close-up](assets/screens/brain-closeup.png) | Head close-up: optic shells → lobula → mushroom body → central complex. |
+| ![turbo](assets/screens/turbo.png) | TURBO: hundreds of self-play games per minute train the brain; one showcase game plays slowly so you can follow it. |
+| ![lesion](assets/screens/lesion-mb.png) | SILENCE the mushroom body mid-game and watch judgment collapse. |
 
 ## How it learns (honestly, it's not magic)
 
@@ -91,7 +113,7 @@ improves over training, and fly-vs-greedy-bot evaluation works.
 
 ## Credits
 
-- Inspired by *A connectomics milestone: mapping the complete male fruit fly brain*
+- Sound is fully procedural (oscillators + filtered noise), no assets.\n- Inspired by *A connectomics milestone: mapping the complete male fruit fly brain*
   (Google Research, 2024) and FlyWire (Jovcevic et al., *Nature* 2024).
 - The 3D fly is a procedural stylized *Drosophila* built in three.js — not a scan.
 - three.js (MIT), chess.js (BSD-2).
