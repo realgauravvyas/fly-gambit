@@ -11,6 +11,14 @@ that flaps, bobs and plays material.
 > **No server. No pretrained weights. No Python.** The learning happens in your tab, in real
 > time. Refresh and the fly still remembers its games (localStorage).
 
+| **REPLAY** — every move pulses the live synapses | **TURBO** — full-speed training behind a showcase game |
+|:--:|:--:|
+| ![replay](assets/screens/hero.png) | ![turbo](assets/screens/turbo.png) |
+| **MACRO** — GFP-green lobula, tdTomato-red mushroom body, gold central complex | **LESION** — silence a region and watch play collapse |
+| ![close-up](assets/screens/brain-closeup.png) | ![lesion](assets/screens/lesion-mb.png) |
+
+**▶ Try it: [realgauravvyas.github.io/fly-gambit](https://realgauravvyas.github.io/fly-gambit/)**
+
 [blog]: https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/
 
 ---
@@ -53,20 +61,10 @@ the activation/silencing experiments that the connectomics field is *actually* u
 
 ## Live demo
 
-**https://realgauravvyas.github.io/fly-gambit/** — no server, no Python, no setup.
-The fly learns chess *in your browser tab* and remembers its progress between visits.
+**https://realgauravvyas.github.io/fly-gambit/**
 
 Local dev (ES modules need any static server; double-clicking `index.html` won't work):
 `python -m http.server 8000` → http://localhost:8000
-
-## Gallery
-
-| | |
-|---|---|
-| ![replay](assets/screens/hero.png) | A replay game: the 3D fly's real activations pulse with every move; learning curves on the left. |
-| ![close-up](assets/screens/brain-closeup.png) | Head close-up: optic shells → lobula → mushroom body → central complex. |
-| ![turbo](assets/screens/turbo.png) | TURBO: hundreds of self-play games per minute train the brain; one showcase game plays slowly so you can follow it. |
-| ![lesion](assets/screens/lesion-mb.png) | SILENCE the mushroom body mid-game and watch judgment collapse. |
 
 ## How it learns (honestly, it's not magic)
 
