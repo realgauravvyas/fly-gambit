@@ -49,10 +49,7 @@ const squares = [];
   }
 })();
 
-const GLYPH = {
-  k: ['\u265A', '\u2654'], q: ['\u265B', '\u2655'], r: ['\u265C', '\u2656'],
-  b: ['\u265D', '\u2657'], n: ['\u265E', '\u2658'], p: ['\u265F', '\u2659']
-};
+const GLYPH = { k: '\u265A', q: '\u265B', r: '\u265C', b: '\u265D', n: '\u265E', p: '\u265F' };
 
 const chart = new FG.Sparkline($('chart'));
 
@@ -61,8 +58,9 @@ function renderBoard(chess) {
   const board = chess.board();
   for (const s of squares) {
     const cell = board[s.r][s.c];
-    s.el.className = 'sq ' + ((s.r + s.c) % 2 ? 'dark' : 'light');
-    s.piece.textContent = cell ? GLYPH[cell.type][cell.color === 'w' ? 1 : 0] : '';
+    s.el.className = 'sq ' + ((s.r + s.c) % 2 ? 'dark' : 'light')
+      + (cell ? (cell.color === 'w' ? ' w' : ' b') : '');
+    s.piece.textContent = cell ? GLYPH[cell.type] : '';
     s.el.dataset.piece = cell ? cell.color + cell.type : '';
     s.el._move = cell;
   }
