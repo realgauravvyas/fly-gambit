@@ -114,7 +114,10 @@ improves over training, and fly-vs-greedy-bot evaluation works.
 - Sound is fully procedural (oscillators + filtered noise), no assets.\n- Inspired by *A connectomics milestone: mapping the complete male fruit fly brain*
   (Google Research, 2024) and FlyWire (Jovcevic et al., *Nature* 2024).
 - The 3D fly is a procedural stylized *Drosophila* built in three.js — not a scan.
-- three.js (MIT), chess.js (BSD-2).
+- Sibling project: [FlySprint](https://github.com/realgauravvyas/fly-sprint) — the same
+  connectome universe, with 1–5 flies whose running gaits are evolved by a genetic
+  algorithm and raced over 100 m / 200 m / 400 m / hurdles.
+- three.js (MIT), chess.js  (BSD-2).
 - Built as a single static page; zero build step, zero dependencies to install.
 
 ## Notes & limitations
