@@ -104,7 +104,7 @@ function showTargets(from) {
 }
 function addMoveText(san, isWhite, mover) {
   const span = document.createElement('span');
-  if (isWhite) span.textContent = (Math.floor(totalPlies / 2) + 1) + '. ';
+  if (isWhite) span.textContent = (Math.floor((game.plies.length + 1) / 2)) + '. ';
   span.append(san + ' ');
   if (mover === 'fly') span.className = 'flym';
   movesEl.appendChild(span);
