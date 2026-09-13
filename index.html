@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FlyGambit — a fruit fly learns chess, live</title>
+<meta name="description" content="A connectome-inspired neural brain modeled on the male Drosophila fruit-fly brain mapping learns chess live in your browser. Watch every synapse fire.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/style.css">
+<script src="vendor/three.min.js"></script>
+<script src="js/brain-viz.js"></script>
+<script src="js/chart.js"></script>
+</head>
+<body>
+<div id="scene"></div>
+<div id="vignette"></div>
+
+<header id="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 48 48" width="34" height="34" aria-hidden="true">
+      <ellipse cx="24" cy="30" rx="9" ry="13" fill="none" stroke="#5ff" stroke-width="1.6" opacity="0.7"/>
+      <circle cx="24" cy="13" r="7" fill="none" stroke="#f5a" stroke-width="1.6" opacity="0.9"/>
+      <path d="M6 20 Q16 12 22 17 M42 20 Q32 12 26 17" fill="none" stroke="#5ff" stroke-width="1.4" opacity="0.6"/>
+      <circle cx="24" cy="30" r="2" fill="#ff4"/>
+    </svg>
+    <div>
+      <h1>FLY<span>GAMBIT</span></h1>
+      <p class="tag">a Drosophila connectome learns chess, live in your browser</p>
+    </div>
+  </div>
+  <div class="credit">inspired by <a href="https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/" target="_blank" rel="noopener">Google Research: a complete male fruit-fly brain</a></div>
+</header>
+
+<main>
+  <!-- LEFT: telemetry -->
+  <aside id="panel-left" class="glass">
+    <h2>NEURAL TELEMETRY</h2>
+    <div class="stat-grid">
+      <div class="stat"><b id="st-games">0</b><span>games played</span></div>
+      <div class="stat"><b id="st-plies">0</b><span>moves decided</span></div>
+      <div class="stat"><b id="st-neurons">—</b><span>neurons</span></div>
+      <div class="stat"><b id="st-syn">—</b><span>synapses</span></div>
+      <div class="stat"><b id="st-caps">0%</b><span>capture rate</span></div>
+      <div class="stat"><b id="st-acc">0%</b><span>greedy agreement</span></div>
+      <div class="stat"><b id="st-ent">—</b><span>policy entropy</span></div>
+      <div class="stat"><b id="st-gps">0</b><span>games / sec</span></div>
+    </div>
+    <h3>LEARNING CURVES</h3>
+    <canvas id="chart" width="300" height="110"></canvas>
+    <div class="legend"><i class="c-caps"></i>capture rate <i class="c-acc"></i>agreement</div>
+    <h3>BRAIN REGIONS <em>silence to see it forget</em></h3>
+    <div id="regions"></div>
+    <div class="hint">drag = orbit · scroll = zoom · space = pause</div>
+  </aside>
+
+  <!-- RIGHT: board + controls -->
+  <aside id="panel-right" class="glass">
+    <div id="status-banner" class="hide"></div>
+    <div id="board"></div>
+    <div class="conf">
+      <div class="conf-label">move confidence</div>
+      <div class="conf-bar"><div id="conf-fill"></div></div>
+    </div>
+    <div id="moves"></div>
+    <div class="controls">
+      <div class="modes">
+        <button id="mode-replay" class="mode active">REPLAY</button>
+        <button id="mode-turbo" class="mode">TURBO</button>
+        <button id="mode-human" class="mode">YOU vs FLY</button>
+      </div>
+      <label class="slider-row">speed
+        <input id="speed" type="range" min="1" max="10" value="5">
+      </label>
+      <div class="btn-row">
+        <button id="btn-pause" class="big">PAUSE</button>
+        <button id="btn-reset" class="big danger">RESET BRAIN</button>
+      </div>
+      <div id="save-note" class="note">progress auto-saves to this browser</div>
+    </div>
+    <div id="human-hint" class="note hide">You play <b>white</b>. The fly plays black — and learns from your games.</div>
+  </aside>
+</main>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
